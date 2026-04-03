@@ -1,0 +1,55 @@
+# Model Configuration
+
+deeplob:
+  in_channels: 1
+  num_classes: 3          # Down / Stationary / Up
+  conv_filters: [32, 32, 32]
+  inception_filters: 64
+  lstm_hidden: 64
+  lstm_layers: 2
+  dropout: 0.2
+  input_levels: 10        # LOB depth (10 bid + 10 ask)
+  horizon: 10             # prediction horizon (k mid-price changes)
+
+transformer:
+  d_model: 128
+  nhead: 8
+  num_encoder_layers: 4
+  dim_feedforward: 256
+  dropout: 0.1
+  max_seq_len: 100
+  num_classes: 3
+  input_features: 40      # 10 levels * 4 features (bid_p, bid_v, ask_p, ask_v)
+
+training:
+  batch_size: 64
+  learning_rate: 0.0001
+  weight_decay: 1e-5
+  epochs: 50
+  patience: 10            # early stopping
+  lr_scheduler: cosine
+  warmup_steps: 1000
+  gradient_clip: 1.0
+  label_smoothing: 0.1
+  alpha: 0.5              # focal loss alpha
+  gamma: 2.0              # focal loss gamma
+
+data:
+  train_split: 0.7
+  val_split: 0.1
+  test_split: 0.2
+  normalize: true
+  normalization: zscore   # zscore | minmax
+  window_size: 100        # lookback window
+  horizon: 10
+  smoothing_alpha: 0.00   # label smoothing for mid-price changes
+  threshold: 0.0002       # threshold for up/down classification
+
+features:
+  use_microstructure: true
+  use_ofi: true           # order flow imbalance
+  use_voi: true           # volume order imbalance
+  use_mid_price: true
+  use_spread: true
+  use_depth_imbalance: true
+  n_levels: 10

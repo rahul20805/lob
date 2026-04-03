@@ -1,0 +1,69 @@
+# Training Configuration
+
+experiment:
+  name: "lob_hft_v1"
+  seed: 42
+  device: "cuda"          # cuda | cpu | mps
+  mixed_precision: true
+  compile_model: false    # torch.compile (PyTorch 2.0+)
+  log_interval: 50        # steps between logging
+  save_interval: 5        # epochs between checkpoints
+
+paths:
+  data_raw: "data/raw/"
+  data_processed: "data/processed/"
+  checkpoints: "checkpoints/"
+  logs: "logs/"
+  results: "results/"
+
+data:
+  dataset: "FI-2010"      # dataset name
+  symbols: ["MSFT", "AAPL", "AMZN", "GOOG", "META"]
+  date_start: "2010-06-01"
+  date_end: "2010-06-14"
+  freq: "tick"            # tick | 1s | 5s
+  levels: 10
+
+training:
+  model: "deeplob"        # deeplob | transformer
+  loss: "focal"           # ce | focal | label_smoothed_ce
+  optimizer: "adam"       # adam | adamw | sgd
+  batch_size: 64
+  epochs: 50
+  learning_rate: 0.0001
+  weight_decay: 1e-5
+  patience: 10
+  min_delta: 0.0001
+  gradient_clip: 1.0
+  num_workers: 4
+  pin_memory: true
+
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - matthews_corrcoef
+    - cohen_kappa
+  per_class: true
+  confusion_matrix: true
+  roc_auc: true
+
+backtest:
+  initial_capital: 1_000_000
+  transaction_cost: 0.0001   # 1 bps
+  slippage: 0.00005
+  risk_free_rate: 0.05
+  max_position: 100
+  min_edge: 0.0001
+
+strategy:
+  spread_factor: 1.5         # quoted spread = spread_factor * mid_spread
+  inventory_target: 0.0
+  inventory_limit: 1000
+  gamma: 0.1                 # risk aversion
+  kappa: 1.5                 # order arrival rate
+  sigma: 0.02                # volatility estimate
+  T: 1.0                     # time horizon (days)
+  dt: 0.001                  # time step
